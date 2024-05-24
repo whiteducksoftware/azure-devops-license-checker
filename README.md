@@ -10,11 +10,15 @@ CLI Tool to check and update licenses for Azure DevOps
 ado-license list --tenant TENANT_ID --org ORGANIZATION_NAME --pat PERSONAL_ACCESS_TOKEN
 ```
 
+![list-cli-output](assets/list-cli-output.png)
+
 ### Update Azure DevOps Account License Types from express to stakeholder
 
 ```
 ado-license update --tenant TENANT_ID --org ORGANIZATION_NAME --pat PERSONAL_ACCESS_TOKEN --license express --target stakeholder
 ```
+
+![update-cli-output](assets/update-cli-output.png)
 
 ### Update Azure DevOps Account License Types, but exclude users from updates which are defined in exclude.json
 
