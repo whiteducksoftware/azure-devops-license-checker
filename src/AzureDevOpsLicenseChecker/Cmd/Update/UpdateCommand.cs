@@ -5,9 +5,9 @@ namespace AzureDevOpsLicenseChecker.Cmd.Update;
 
 public class UpdateCommand
 {
-    public static async Task updateAsync(string tenant, string org, string pat, string license, string target, int since)
+    public static async Task updateAsync(string tenant, string org, string pat, string license, string target, int since, string file)
     {
-        var licenseCheckerService = new LicenseCheckerService(tenant, org, pat, license, target, since);
+        var licenseCheckerService = new LicenseCheckerService(tenant, org, pat, license, target, since, file);
         var usersToPatch = await licenseCheckerService.GetUsersToPatch();
 
         if (usersToPatch.Count == 0)

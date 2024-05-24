@@ -1,6 +1,8 @@
 using AzureDevOpsLicenseChecker.AzureDevOpsClient.Services;
 using AzureDevOpsLicenseChecker.AzureDevOpsClient.Models;
 using Spectre.Console;
+using Newtonsoft.Json;
+using AzureDevOpsLicenseChecker.Models;
 
 namespace AzureDevOpsLicenseChecker.Services;
 
@@ -11,6 +13,8 @@ public class LicenseCheckerService
     public string licenseToReplace { get; }
     public string targetLicense { get; }
 
+    private ExcludeUsersModel _excludeUsers;
+
     private static IDictionary<string, UserEntitlement> _users = new Dictionary<string, UserEntitlement>();
     private static IList<UserEntitlement> _usersToPatch = new List<UserEntitlement>();
 
@@ -19,7 +23,8 @@ public class LicenseCheckerService
                                     string personalAccessToken,
                                     string licenseToReplace = "",
                                     string targetLicense = "",
-                                    int sinceLastLogin = 0)
+                                    int sinceLastLogin = 0,
+                                    string file = "")
     {
         // https://docs.microsoft.com/en-us/rest/api/azure/devops/memberentitlementmanagement/user-entitlements?view=azure-devops-rest-6.0&viewFallbackFrom=azure-devops-rest-7.0
 
@@ -28,6 +33,17 @@ public class LicenseCheckerService
         this.licenseToReplace = licenseToReplace;
         this.targetLicense = targetLicense;
         _threshold = sinceLastLogin;
+
+        if (file != string.Empty && file is not null)
+        {
+            var fileContent = File.ReadAllText(file);
+            if (fileContent is not null)
+                _excludeUsers = JsonConvert.DeserializeObject<ExcludeUsersModel>(fileContent);
+        }
+        else
+        {
+            _excludeUsers = new ExcludeUsersModel();
+        }
     }
 
     /// <summary>
@@ -55,7 +71,6 @@ public class LicenseCheckerService
     */
     public async Task PrepareUsers()
     {
-
         UserEntitlements? entitlements = await _devOpsClient.GetAllUsers();
 
         foreach(UserEntitlement member in entitlements.Members)
@@ -65,7 +80,7 @@ public class LicenseCheckerService
             // and the user has not logged in for "_threshold" days
             // and the user is not whitelisted.
             if( member.AccessLevel.AccountLicenseType.Equals(licenseToReplace) && 
-                (DateTime.UtcNow - member.LastAccessedDate).Days > _threshold
+                (DateTime.UtcNow - member.LastAccessedDate).Days > _threshold && !_excludeUsers.Users.Contains(member.User.MailAddress)
             )
             {
                 member.UpdateLicense = true;

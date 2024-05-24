@@ -47,6 +47,10 @@ class Program
             name: "--since",
             description: "the minimum number of days since the last login [Default: 0]");
 
+        var fileOption = new Option<string>(
+            name: "--file",
+            description: "exclude users from update");
+
         var rootCommand = new RootCommand("Azure DevOps License Checker");
         
         var listCommand = new Command("list", "list azure devops licenses")
@@ -63,7 +67,8 @@ class Program
             personalAccessTokenOption,
             licenseOption,
             targetLicenseOption,
-            sinceLastLoginOption
+            sinceLastLoginOption,
+            fileOption
         };
 
         listCommand.SetHandler(ListCommand.listAsync,
@@ -76,7 +81,8 @@ class Program
                                   personalAccessTokenOption,
                                   licenseOption,
                                   targetLicenseOption,
-                                  sinceLastLoginOption);
+                                  sinceLastLoginOption,
+                                  fileOption);
         
         rootCommand.AddCommand(listCommand);
         rootCommand.AddCommand(updateCommand);
