@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using System.Net.Http.Headers;
 
 using AzureDevOpsLicenseChecker.AzureDevOpsClient.Models;
+using System.Net.Http.Json;
 
 
 
@@ -53,7 +54,15 @@ namespace AzureDevOpsLicenseChecker.AzureDevOpsClient.Services
 
         public async Task UpdateUsersAsync(IList<UpdateUserAccessLevel> usersToPatch)
         {
-            var resp = await this.PatchAsync<IList<UpdateUserAccessLevel>>(_client, $"{this._userentitlementApiURL}{this._versionQuery}{this._apiVersion}", usersToPatch);
+            try
+            {
+                var resp = await this.PatchAsync<IList<UpdateUserAccessLevel>>(_client, $"{this._userentitlementApiURL}{this._versionQuery}{this._apiVersion}", usersToPatch);
+                resp.EnsureSuccessStatusCode();
+            }
+            catch (Exception ex) when (ex is HttpRequestException)
+            {
+                Console.WriteLine("An Error occured. Please try now or later!");
+            }
         }
 
 

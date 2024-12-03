@@ -12,7 +12,7 @@ public class UpdateCommand
 
         if (usersToPatch.Count == 0)
         {
-            Console.WriteLine("No licenses to update");
+            Console.WriteLine("\n\nNo licenses to update\n");
             Environment.Exit(0);
         }
         else
@@ -30,16 +30,18 @@ public class UpdateCommand
 
             AnsiConsole.Write(table);
 
-            var answer = "";
+            var answer = "tmpString";
 
-            while (answer != "Y")
+            while (answer != "Y" && answer != "y" && answer != "")
             {
                 Console.WriteLine();
-                Console.Write("Do you really want to update these licenses? [Y/N]: ");
+                Console.Write("Do you really want to update these licenses? [Y/n]: ");
                 answer = Console.ReadLine();
 
-                if (answer == "N")
+                if (answer == "N" || answer == "n")
+                {
                     Environment.Exit(0);
+                }
             }
 
             await licenseCheckerService.UpdateUserLicensesAsync();
