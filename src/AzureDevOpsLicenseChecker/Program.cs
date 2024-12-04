@@ -52,7 +52,7 @@ class Program
             description: "exclude users from update");
 
         var rootCommand = new RootCommand("Azure DevOps License Checker");
-        
+
         var listCommand = new Command("list", "list azure devops licenses")
         {
             tenantOption,
@@ -71,11 +71,11 @@ class Program
             fileOption
         };
 
-        listCommand.SetHandler(ListCommand.listAsync,
+        listCommand.SetHandler(ListCommand.ListAsync,
                                tenantOption,
                                organizationOption,
                                personalAccessTokenOption);
-        updateCommand.SetHandler(UpdateCommand.updateAsync,
+        updateCommand.SetHandler(UpdateCommand.UpdateAsync,
                                   tenantOption,
                                   organizationOption,
                                   personalAccessTokenOption,
@@ -83,10 +83,10 @@ class Program
                                   targetLicenseOption,
                                   sinceLastLoginOption,
                                   fileOption);
-        
+
         rootCommand.AddCommand(listCommand);
         rootCommand.AddCommand(updateCommand);
-        
+
         return await rootCommand.InvokeAsync(args);
     }
 }

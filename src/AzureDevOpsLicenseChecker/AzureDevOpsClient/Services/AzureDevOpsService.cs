@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using System.Net.Http.Headers;
 
 using AzureDevOpsLicenseChecker.AzureDevOpsClient.Models;
+using System.Net.Http.Json;
 
 
 
@@ -10,13 +11,14 @@ namespace AzureDevOpsLicenseChecker.AzureDevOpsClient.Services
 {
     public class AzureDevOpsService : DevOpsHttpClient
     {
-        private readonly string _apiVersion = "6.0-preview.3";
+        private readonly string _apiVersion = "7.1-preview.4";
+        //private readonly string _apiVersion = "6.0-preview.3";
 
 
         private readonly string _baseURL = "https://vsaex.dev.azure.com";
         private readonly string _versionQuery = "?api-version=";
         private readonly string _userentitlementApiURL = "_apis/userentitlements";
-    
+
 
         private readonly DevOpsCredentials _credentials;
 
@@ -32,12 +34,12 @@ namespace AzureDevOpsLicenseChecker.AzureDevOpsClient.Services
 
 
 
-        public async Task<UserEntitlements?> GetAllUsers()
+        public async Task<UserEntitlements?> GetAllUsersAsync()
         {
             UserEntitlements? entitlements = null;
 
             HttpResponseMessage response = await this.GetAsync(_client, $"{this._userentitlementApiURL}{this._versionQuery}{this._apiVersion}");
-            if(response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
             {
                 entitlements = JsonConvert.DeserializeObject<UserEntitlements>(await response.Content.ReadAsStringAsync());
             }
@@ -50,9 +52,17 @@ namespace AzureDevOpsLicenseChecker.AzureDevOpsClient.Services
         }
 
 
-        public async Task UpdateUsers(IList<UpdateUserAccessLevel> usersToPatch)
+        public async Task UpdateUsersAsync(IList<UpdateUserAccessLevel> usersToPatch)
         {
+            try
+            {
                 var resp = await this.PatchAsync<IList<UpdateUserAccessLevel>>(_client, $"{this._userentitlementApiURL}{this._versionQuery}{this._apiVersion}", usersToPatch);
+                resp.EnsureSuccessStatusCode();
+            }
+            catch (Exception ex) when (ex is HttpRequestException)
+            {
+                Console.WriteLine("An Error occured. Please try now or later!");
+            }
         }
 
 

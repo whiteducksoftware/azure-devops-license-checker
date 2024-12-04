@@ -5,45 +5,47 @@ namespace AzureDevOpsLicenseChecker.Cmd.Update;
 
 public class UpdateCommand
 {
-    public static async Task updateAsync(string tenant, string org, string pat, string license, string target, int since, string file)
+    public static async Task UpdateAsync(string tenant, string org, string pat, string license, string target, int since, string file)
     {
         var licenseCheckerService = new LicenseCheckerService(tenant, org, pat, license, target, since, file);
-        var usersToPatch = await licenseCheckerService.GetUsersToPatch();
+        var usersToPatch = await licenseCheckerService.GetUsersToPatchAsync();
 
         if (usersToPatch.Count == 0)
+        {
+            Console.WriteLine("\n\nNo licenses to update\n");
+            Environment.Exit(0);
+        }
+        else
+        {
+            var table = new Table();
+            table.BorderColor(Color.Cyan1);
+            table.Border(TableBorder.Rounded);
+            string[] columns = ["Id", "Account License Type", "MSDN License Type", "Status", "User", "Last Accessed"];
+            table.AddColumns(columns);
+
+            foreach (var entry in usersToPatch)
             {
-                Console.WriteLine("No licenses to update");
-                Environment.Exit(0);
+                table.AddRow(entry.Id, $"[red]{licenseCheckerService.licenseToReplace}[/] -> [green]{licenseCheckerService.targetLicense}[/]", entry.AccessLevel.MsdnLicenseType, entry.AccessLevel.Status, entry.User.DisplayName, entry.LastAccessedDate.ToShortDateString());
             }
-            else
+
+            AnsiConsole.Write(table);
+
+            var answer = "tmpString";
+
+            while (answer != "Y" && answer != "y" && answer != "")
             {
-                var table = new Table();
-                table.BorderColor(Color.Cyan1);
-                table.Border(TableBorder.Rounded);
-                string[] columns = [ "Id", "Account License Type", "MSDN License Type", "Status", "User", "Last Accessed" ];
-                table.AddColumns(columns);
-            
-                foreach(var entry in usersToPatch)
+                Console.WriteLine();
+                Console.Write("Do you really want to update these licenses? [Y/n]: ");
+                answer = Console.ReadLine();
+
+                if (answer == "N" || answer == "n")
                 {
-                    table.AddRow(entry.Id, $"[red]{licenseCheckerService.licenseToReplace}[/] -> [green]{licenseCheckerService.targetLicense}[/]", entry.AccessLevel.MsdnLicenseType, entry.AccessLevel.Status, entry.User.DisplayName, entry.LastAccessedDate.ToShortDateString());
+                    Environment.Exit(0);
                 }
-
-                AnsiConsole.Write(table);
-
-                var answer = "";
-
-                while (answer != "Y")
-                {
-                    Console.WriteLine();
-                    Console.Write("Do you really want to update these licenses? [Y/N]: ");
-                    answer = Console.ReadLine();
-
-                    if (answer == "N")
-                        Environment.Exit(0);
-                }
-
-                await licenseCheckerService.UpdateUserLicenses();
             }
+
+            await licenseCheckerService.UpdateUserLicensesAsync();
+        }
 
     }
 }

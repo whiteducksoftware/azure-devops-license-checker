@@ -49,16 +49,16 @@ public class LicenseCheckerService
     /// <summary>
     /// Gets all user from Azure DevOps and returns them as a IDictionary. 
     /// </summary>
-    public async Task<IDictionary<string, UserEntitlement>> GetUsers()
+    public async Task<IDictionary<string, UserEntitlement>> GetUsersAsync()
     {
-        await PrepareUsers();
+        await PrepareUsersAsync();
 
         return _users;
     }
 
-    public async Task<IList<UserEntitlement>> GetUsersToPatch()
+    public async Task<IList<UserEntitlement>> GetUsersToPatchAsync()
     {
-        await PrepareUsers();
+        await PrepareUsersAsync();
 
         return _usersToPatch;
     }
@@ -69,25 +69,25 @@ public class LicenseCheckerService
     If certain conditions based on their license type and the last day their were logged in 
     are met the user is added to the "_usersToPatch" list.
     */
-    public async Task PrepareUsers()
+    public async Task PrepareUsersAsync()
     {
-        UserEntitlements? entitlements = await _devOpsClient.GetAllUsers();
+        UserEntitlements? entitlements = await _devOpsClient.GetAllUsersAsync();
 
-        foreach(UserEntitlement member in entitlements.Members)
+        foreach (UserEntitlement member in entitlements.Items)
         {
             // Check if the license of a users has to be updated.
             // This is the case if a user has a license type defined in "_licenseToReplace"
             // and the user has not logged in for "_threshold" days
             // and the user is not whitelisted.
-            if( member.AccessLevel.AccountLicenseType.Equals(licenseToReplace) && 
+            if (member.AccessLevel.AccountLicenseType.Equals(licenseToReplace) &&
                 (DateTime.UtcNow - member.LastAccessedDate).Days > _threshold && !_excludeUsers.Users.Contains(member.User.MailAddress)
             )
             {
                 member.UpdateLicense = true;
                 _usersToPatch.Add(member);
             }
-            
-            if(_users.ContainsKey(member.Id))
+
+            if (_users.ContainsKey(member.Id))
             {
                 _users[member.Id] = member;
             }
@@ -98,15 +98,15 @@ public class LicenseCheckerService
         }
 
         // Current local collection of users smaller then the newly fetched collection -> users have been removed!
-        if(_users.Count() < entitlements.Members.Count())
+        if (_users.Count() < entitlements.Items.Count())
         {
-            IDictionary<String, UserEntitlement> newUser = entitlements.Members.ToDictionary(user => user.Id, user => user);
+            IDictionary<String, UserEntitlement> newUser = entitlements.Items.ToDictionary(user => user.Id, user => user);
 
             // Iterate over the current collection of users and check if all users 
             // still exist in the newly fetched collection.
-            foreach(KeyValuePair<String, UserEntitlement> userEntry in _users)
+            foreach (KeyValuePair<String, UserEntitlement> userEntry in _users)
             {
-                if(!newUser.ContainsKey(userEntry.Key))
+                if (!newUser.ContainsKey(userEntry.Key))
                 {
                     _users.Remove(userEntry.Key);
                 }
@@ -114,17 +114,18 @@ public class LicenseCheckerService
         }
     }
 
-    public async Task UpdateUserLicenses()
+    public async Task UpdateUserLicensesAsync()
     {
         IList<UpdateUserAccessLevel> updateList = _usersToPatch.Select(user => new UpdateUserAccessLevel
         {
-            from = "", path = $"/{user.Id}/accessLevel",
-            value = new UpdateUserAccessLevel.AccessLevelUpdateValue {accountLicenseType = targetLicense}
+            from = "",
+            path = $"/{user.Id}/accessLevel",
+            value = new UpdateUserAccessLevel.AccessLevelUpdateValue { accountLicenseType = targetLicense }
         }).ToList();
 
         if (!(updateList.Count <= 0))
-        {   
-            await _devOpsClient.UpdateUsers(updateList);
+        {
+            await _devOpsClient.UpdateUsersAsync(updateList);
 
             //var resp = await _devOpsClient.PatchAsync(this._endpoint, updateList);
             //Console.WriteLine(await resp.Content.ReadAsStringAsync());

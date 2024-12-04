@@ -3,7 +3,7 @@ namespace AzureDevOpsLicenseChecker.AzureDevOpsClient.Models
 {
     public class UserEntitlements
     {
-        public UserEntitlement[] Members;
+        public UserEntitlement[] Items;
     }
 
     public class UserEntitlement
@@ -13,8 +13,7 @@ namespace AzureDevOpsLicenseChecker.AzureDevOpsClient.Models
         public AccessLevel AccessLevel;
         public DateTime LastAccessedDate;
         public DateTime DateCreated;
-
-        public Boolean UpdateLicense = false;
+        public bool UpdateLicense = false;
     }
 
     public class User
