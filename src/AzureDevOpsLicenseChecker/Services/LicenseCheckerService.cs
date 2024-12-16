@@ -137,7 +137,13 @@ public class LicenseCheckerService
 
     private string CheckIfValidLicenseAndReturn(string targetLicense)
     {
-        if (targetLicense.Equals("stakeholder") || targetLicense.Equals("express") || targetLicense.Equals("none") || targetLicense.Equals(string.Empty))
+        //for debugging so you don't have to switch license 
+        //if (targetLicense.Equals("none") || targetLicense.Equals(string.Empty))
+        //{
+        //    return targetLicense;
+        //}
+
+        if (targetLicense.Equals("stakeholder") || targetLicense.Equals("express"))
         {
             return targetLicense;
         }
