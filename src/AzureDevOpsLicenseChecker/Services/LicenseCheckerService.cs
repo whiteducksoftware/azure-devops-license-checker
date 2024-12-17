@@ -31,7 +31,7 @@ public class LicenseCheckerService
         DevOpsCredentials credentials = new DevOpsCredentials(new Tenant(tenantId, organizationName), personalAccessToken);
         _devOpsClient = new AzureDevOpsService(credentials);
         this.licenseToReplace = licenseToReplace;
-        this.targetLicense = CheckIfValidLicenseAndReturn(targetLicense);
+        this.targetLicense = targetLicense;
         _threshold = sinceLastLogin;
 
         try
@@ -138,23 +138,6 @@ public class LicenseCheckerService
             //var resp = await _devOpsClient.PatchAsync(this._endpoint, updateList);
             //Console.WriteLine(await resp.Content.ReadAsStringAsync());
         }
-    }
-
-    private string CheckIfValidLicenseAndReturn(string targetLicense)
-    {
-        //for debugging so you don't have to switch license 
-        //if (targetLicense.Equals("none") || targetLicense.Equals(string.Empty))
-        //{
-        //    return targetLicense;
-        //}
-
-        if (targetLicense.Equals("stakeholder") || targetLicense.Equals("express"))
-        {
-            return targetLicense;
-        }
-        Console.WriteLine("\nNo valid Target License! Please enter one of these License types: 'stakeholder', 'express'\n");
-        Environment.Exit(0);
-        return string.Empty;
     }
 }
 
