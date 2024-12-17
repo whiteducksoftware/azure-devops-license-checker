@@ -77,6 +77,11 @@ public class LicenseCheckerService
     public async Task PrepareUsersAsync()
     {
         UserEntitlements? entitlements = await _devOpsClient.GetAllUsersAsync();
+        if (entitlements is null)
+        {
+            Console.WriteLine("\n Unfortunatly no users could be fetched! \n");
+            Environment.Exit(0);
+        }
         foreach (UserEntitlement member in entitlements.Items)
         {
             // Check if the license of a users has to be updated.
@@ -101,7 +106,7 @@ public class LicenseCheckerService
             }
         }
 
-        // Current local collection of users smaller then the newly fetched collection -> users have been removed!
+        // Current local collection of users smaller than the newly fetched collection -> users have been removed!
         if (_users.Count() < entitlements.Items.Count())
         {
             var newUser = entitlements.Items.ToDictionary(user => user.Id, user => user);
