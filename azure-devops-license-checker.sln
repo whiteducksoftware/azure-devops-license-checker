@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.002.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{CC5D5C32-021C-4CDE-B704-59D8EDEC27DD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureDevOpsLicenseChecker", "src\AzureDevOpsLicenseChecker\AzureDevOpsLicenseChecker.csproj", "{0F9EC22C-E80F-4DDD-9AF4-B290B08D5070}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0F9EC22C-E80F-4DDD-9AF4-B290B08D5070}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F9EC22C-E80F-4DDD-9AF4-B290B08D5070}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F9EC22C-E80F-4DDD-9AF4-B290B08D5070}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F9EC22C-E80F-4DDD-9AF4-B290B08D5070}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{0F9EC22C-E80F-4DDD-9AF4-B290B08D5070} = {CC5D5C32-021C-4CDE-B704-59D8EDEC27DD}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6F3B2C1D-F1F5-4CE8-8005-8498FF4C1392}
+	EndGlobalSection
+EndGlobal

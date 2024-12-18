@@ -34,13 +34,18 @@ public class LicenseCheckerService
         this.targetLicense = targetLicense;
         _threshold = sinceLastLogin;
 
-        if (file != string.Empty && file is not null)
+        try
         {
             var fileContent = File.ReadAllText(file);
             if (fileContent is not null)
-                _excludeUsers = JsonConvert.DeserializeObject<ExcludeUsersModel>(fileContent);
+                _excludeUsers = JsonConvert.DeserializeObject<ExcludeUsersModel>(fileContent) ?? new ExcludeUsersModel();
         }
-        else
+        catch (Exception ex) when (ex is JsonReaderException || ex is JsonSerializationException) 
+        {
+            Console.WriteLine("\n Json is unvalid. Try Format: '{[\"fred@whiteduck.de\", \"user01@whiteduck.de\"]}' \n");
+            Environment.Exit(0);
+        }
+        catch (Exception)
         {
             _excludeUsers = new ExcludeUsersModel();
         }
@@ -72,7 +77,11 @@ public class LicenseCheckerService
     public async Task PrepareUsersAsync()
     {
         UserEntitlements? entitlements = await _devOpsClient.GetAllUsersAsync();
-
+        if (entitlements is null)
+        {
+            Console.WriteLine("\n Unfortunatly no users could be fetched! \n");
+            Environment.Exit(0);
+        }
         foreach (UserEntitlement member in entitlements.Items)
         {
             // Check if the license of a users has to be updated.
@@ -97,14 +106,14 @@ public class LicenseCheckerService
             }
         }
 
-        // Current local collection of users smaller then the newly fetched collection -> users have been removed!
+        // Current local collection of users smaller than the newly fetched collection -> users have been removed!
         if (_users.Count() < entitlements.Items.Count())
         {
-            IDictionary<String, UserEntitlement> newUser = entitlements.Items.ToDictionary(user => user.Id, user => user);
+            var newUser = entitlements.Items.ToDictionary(user => user.Id, user => user);
 
             // Iterate over the current collection of users and check if all users 
             // still exist in the newly fetched collection.
-            foreach (KeyValuePair<String, UserEntitlement> userEntry in _users)
+            foreach (var userEntry in _users)
             {
                 if (!newUser.ContainsKey(userEntry.Key))
                 {
@@ -126,7 +135,6 @@ public class LicenseCheckerService
         if (!(updateList.Count <= 0))
         {
             await _devOpsClient.UpdateUsersAsync(updateList);
-
             //var resp = await _devOpsClient.PatchAsync(this._endpoint, updateList);
             //Console.WriteLine(await resp.Content.ReadAsStringAsync());
         }
