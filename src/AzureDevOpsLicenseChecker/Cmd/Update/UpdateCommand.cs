@@ -59,11 +59,11 @@ public class UpdateCommand
         //    return;
         //}
 
-        if (targetLicense.Equals("stakeholder") || targetLicense.Equals("express"))
+        if (targetLicense.Equals("stakeholder") || targetLicense.Equals("express") || targetLicense.Equals("advanced"))
         {
             return;
         }
-        Console.WriteLine("\nNo valid Target License! Please enter one of these License types: 'stakeholder', 'express'\n");
+        Console.WriteLine("\nNo valid Target License! Please enter one of the following License types: 'stakeholder', 'express' or 'advanced'\n");
         Environment.Exit(0);
     }
 }
