@@ -8,13 +8,6 @@ class Program
 {
     static async Task<int> Main(string[] args)
     {
-        var tenantOption = new Option<string>(
-            name: "--tenant",
-            description: "The tenant id of the used Azure DevOps organization")
-        {
-            IsRequired = true
-        };
-
         var organizationOption = new Option<string>(
             name: "--org",
             description: "The organization name")
@@ -55,14 +48,12 @@ class Program
 
         var listCommand = new Command("list", "list azure devops licenses")
         {
-            tenantOption,
             organizationOption,
             personalAccessTokenOption
         };
 
         var updateCommand = new Command("update", "update azure devops licenses")
         {
-            tenantOption,
             organizationOption,
             personalAccessTokenOption,
             licenseOption,
@@ -72,11 +63,9 @@ class Program
         };
 
         listCommand.SetHandler(ListCommand.ListAsync,
-                               tenantOption,
                                organizationOption,
                                personalAccessTokenOption);
         updateCommand.SetHandler(UpdateCommand.UpdateAsync,
-                                  tenantOption,
                                   organizationOption,
                                   personalAccessTokenOption,
                                   licenseOption,
