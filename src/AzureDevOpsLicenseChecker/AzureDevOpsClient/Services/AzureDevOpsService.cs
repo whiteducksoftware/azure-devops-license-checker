@@ -1,18 +1,12 @@
-
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
-
 using AzureDevOpsLicenseChecker.AzureDevOpsClient.Models;
-using System.Net.Http.Json;
-
-
 
 namespace AzureDevOpsLicenseChecker.AzureDevOpsClient.Services
 {
     public class AzureDevOpsService : DevOpsHttpClient
     {
         private readonly string _apiVersion = "7.1-preview.4";
-        //private readonly string _apiVersion = "6.0-preview.3";
 
 
         private readonly string _baseURL = "https://vsaex.dev.azure.com";
@@ -28,8 +22,8 @@ namespace AzureDevOpsLicenseChecker.AzureDevOpsClient.Services
 
         public AzureDevOpsService(DevOpsCredentials credentials)
         {
-            this._credentials = credentials;
-            this._client = GetHttpClient();
+            _credentials = credentials;
+            _client = GetHttpClient();
         }
 
 
@@ -37,17 +31,16 @@ namespace AzureDevOpsLicenseChecker.AzureDevOpsClient.Services
         public async Task<UserEntitlements?> GetAllUsersAsync()
         {
             UserEntitlements? entitlements = null;
-
-            HttpResponseMessage response = await this.GetAsync(_client, $"{this._userentitlementApiURL}{this._versionQuery}{this._apiVersion}");
-            if (response.IsSuccessStatusCode)
+            try 
             {
-                entitlements = JsonConvert.DeserializeObject<UserEntitlements>(await response.Content.ReadAsStringAsync());
-            }
-            else
+            HttpResponseMessage response = await GetAsync(_client, $"{_userentitlementApiURL}{_versionQuery}{_apiVersion}");
+            response.EnsureSuccessStatusCode();
+            entitlements = JsonConvert.DeserializeObject<UserEntitlements>(await response.Content.ReadAsStringAsync());
+            } catch (HttpRequestException) 
             {
-                throw new Exception("ACCESS DENIED! Check your personal access token!");
+                Console.WriteLine("\n ACCESS DENIED! Check your personal access token or organisation name! \n");
+                Environment.Exit(0);
             }
-
             return entitlements;
         }
 
@@ -56,7 +49,7 @@ namespace AzureDevOpsLicenseChecker.AzureDevOpsClient.Services
         {
             try
             {
-                var resp = await this.PatchAsync<IList<UpdateUserAccessLevel>>(_client, $"{this._userentitlementApiURL}{this._versionQuery}{this._apiVersion}", usersToPatch);
+                var resp = await PatchAsync(_client, $"{_userentitlementApiURL}{_versionQuery}{_apiVersion}", usersToPatch);
                 resp.EnsureSuccessStatusCode();
             }
             catch (Exception ex) when (ex is HttpRequestException)
@@ -68,7 +61,7 @@ namespace AzureDevOpsLicenseChecker.AzureDevOpsClient.Services
 
         public override HttpClient GetHttpClient()
         {
-            var client = new HttpClient { BaseAddress = new Uri($"{this._baseURL}/{this._credentials.Tenant.Name}/") };
+            var client = new HttpClient { BaseAddress = new Uri($"{_baseURL}/{_credentials.Tenant.Name}/") };
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             client.DefaultRequestHeaders.Add("User-Agent", "ManagedClientConsoleAppSample");

@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Spectre.Console;
 using AzureDevOpsLicenseChecker.Services;
 
@@ -7,6 +8,7 @@ public class UpdateCommand
 {
     public static async Task UpdateAsync(string tenant, string org, string pat, string license, string target, int since, string file)
     {
+        CheckIfValidLicense(target);
         var licenseCheckerService = new LicenseCheckerService(tenant, org, pat, license, target, since, file);
         var usersToPatch = await licenseCheckerService.GetUsersToPatchAsync();
 
@@ -47,5 +49,21 @@ public class UpdateCommand
             await licenseCheckerService.UpdateUserLicensesAsync();
         }
 
+    }
+    
+    private static void CheckIfValidLicense(string targetLicense)
+    {
+        //for debugging so you don't have to switch license 
+        //if (targetLicense.Equals("none") || targetLicense.Equals(string.Empty))
+        //{
+        //    return;
+        //}
+
+        if (targetLicense.Equals("stakeholder") || targetLicense.Equals("express") || targetLicense.Equals("advanced"))
+        {
+            return;
+        }
+        Console.WriteLine("\nNo valid Target License! Please enter one of the following License types: 'stakeholder', 'express' or 'advanced'\n");
+        Environment.Exit(0);
     }
 }
