@@ -18,8 +18,7 @@ public class LicenseCheckerService
     private static IDictionary<string, UserEntitlement> _users = new Dictionary<string, UserEntitlement>();
     private static IList<UserEntitlement> _usersToPatch = new List<UserEntitlement>();
 
-    public LicenseCheckerService(string tenantId,
-                                    string organizationName,
+    public LicenseCheckerService(string organizationName,
                                     string personalAccessToken,
                                     string licenseToReplace = "",
                                     string targetLicense = "",
@@ -28,7 +27,7 @@ public class LicenseCheckerService
     {
         // https://docs.microsoft.com/en-us/rest/api/azure/devops/memberentitlementmanagement/user-entitlements?view=azure-devops-rest-6.0&viewFallbackFrom=azure-devops-rest-7.0
 
-        DevOpsCredentials credentials = new DevOpsCredentials(new Tenant(tenantId, organizationName), personalAccessToken);
+        DevOpsCredentials credentials = new DevOpsCredentials(organizationName, personalAccessToken);
         _devOpsClient = new AzureDevOpsService(credentials);
         this.licenseToReplace = licenseToReplace;
         this.targetLicense = targetLicense;

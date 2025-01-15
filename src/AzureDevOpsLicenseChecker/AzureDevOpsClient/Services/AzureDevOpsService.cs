@@ -61,7 +61,7 @@ namespace AzureDevOpsLicenseChecker.AzureDevOpsClient.Services
 
         public override HttpClient GetHttpClient()
         {
-            var client = new HttpClient { BaseAddress = new Uri($"{_baseURL}/{_credentials.Tenant.Name}/") };
+            var client = new HttpClient { BaseAddress = new Uri($"{_baseURL}/{_credentials.OrganisationName}/") };
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             client.DefaultRequestHeaders.Add("User-Agent", "ManagedClientConsoleAppSample");
