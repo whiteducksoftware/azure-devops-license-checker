@@ -1,0 +1,118 @@
+name: Update Homebrew Formula
+
+on:
+  workflow_run:
+    workflows: ["Publish"]  # Name of the first workflow
+    types:
+      - completed
+
+jobs:
+  update-formula:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}  # Only run if the previous workflow was successful
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Generate Homebrew Formula
+        id: generate_formula
+        run: |
+          # Your logic to generate the Homebrew formula after the release
+          SOFTWARE_NAME="adolc"
+          UPPERCASE_NAME="Adolc"
+          VERSION=$(git describe --tags --abbrev=0)  # Ensure you extract the version properly
+          BASE_URL="https://github.com/whiteducksoftware/azure-devops-license-checker/releases/download/$VERSION"
+          
+          # Define paths for each platform's asset
+          LINUX_X64_URL="$BASE_URL/$SOFTWARE_NAME-linux-x64.tar.gz"
+          LINUX_X64_SHA256=$(curl -sSL "$LINUX_X64_URL" | shasum -a 256 | awk '{print $1}')
+          
+          LINUX_ARM_URL="$BASE_URL/$SOFTWARE_NAME-linux-arm64.tar.gz"
+          LINUX_ARM_SHA256=$(curl -sSL "$LINUX_ARM_URL" | shasum -a 256 | awk '{print $1}')
+          
+          MAC_X64_URL="$BASE_URL/$SOFTWARE_NAME-osx-x64.tar.gz"
+          MAC_X64_SHA256=$(curl -sSL "$MAC_X64_URL" | shasum -a 256 | awk '{print $1}')
+          
+          MAC_ARM_URL="$BASE_URL/$SOFTWARE_NAME-osx-arm64.tar.gz"
+          MAC_ARM_SHA256=$(curl -sSL "$MAC_ARM_URL" | shasum -a 256 | awk '{print $1}')
+
+          FORMULA_PATH=./$SOFTWARE_NAME.rb
+
+          cat <<EOF > $FORMULA_PATH
+          class $UPPERCASE_NAME < Formula
+            desc "Checker whether an Ado License should be updated"
+            homepage "https://github.com/whiteducksoftware/azure-devops-license-checker"
+            version "$VERSION"
+            license "MIT"
+            
+            # Define all platform-specific URLs and SHA256 checksums
+            if Hardware::CPU.intel?
+              url "$MAC_X64_URL"
+              sha256 "$MAC_X64_SHA256"
+            elsif Hardware::CPU.arm?
+              url "$MAC_ARM_URL"
+              sha256 "$MAC_ARM_SHA256"
+            end
+
+            # Linux (assuming x64)
+            if OS.linux?
+              if Hardware::CPU.intel?
+                url "$LINUX_X64_URL"
+                sha256 "$LINUX_X64_SHA256"
+              elsif Hardware::CPU.arm?
+                url "$LINUX_ARM_URL"
+                sha256 "$LINUX_ARM_SHA256"
+              end
+            end
+
+            def install
+              # Installation commands depending on platform
+              bin.install "$SOFTWARE_NAME"
+            end
+          end
+          EOF
+
+      - name: Clone Homebrew Tap Repo
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT }}  # Use the PAT for authentication
+        run: |
+          # Clone the Tap repository
+          git clone https://x-access-token:${GITHUB_TOKEN}@github.com/whiteducksoftware/homebrew-tap.git tap_repo
+          cd tap_repo
+          
+          # Setup Git
+          git config --local user.name "GitHub Action"
+          git config --local user.email "action@users.noreply.github.com"
+
+      - name: Create New Branch
+        run: |
+          cd tap_repo
+          git checkout -b "updates-for-pr"
+          git pull origin updates-for-pr
+
+      - name: Copy Data to Homebrew Tap Repo
+        run: |
+          cd tap_repo
+          
+          # Ensures the Formula directory exists; create if it doesn't
+          mkdir -p Formula
+
+          # Copy the generated formula to the tap repository
+          cp ../$SOFTWARE_NAME.rb ./Formula/$SOFTWARE_NAME.rb            
+
+          # Commit 
+          git add -A
+          git commit -am "Add/update Homebrew formula for $VERSION" --allow-empty
+          
+      - name: Push Changes to Homebrew Tap Repo
+        run: |
+          cd tap_repo
+          git push origin updates-for-pr
+      
+      - name: Create Pull Request
+        run: |
+          PR_DATA=$(jq -n --arg title "Add/update formula for version '$VERSION'" --arg head "updates-for-pr" --arg base "main" --arg body "This PR includes updates for $SOFTWARE_NAME/$VERSION" '{title: $title, head: $head, base: $base, body: $body}')
+          curl -X POST -H "Authorization: token $GITHUB_TOKEN" -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/migration-demo-wd/homebrew-tap/pulls -d "$PR_DATA"
