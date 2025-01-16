@@ -21,8 +21,8 @@ jobs:
         id: generate_formula
         run: |
           # Your logic to generate the Homebrew formula after the release
-          SOFTWARE_NAME="adolc"
-          UPPERCASE_NAME="Adolc"
+          SOFTWARE_NAME="lichado"
+          UPPERCASE_NAME="Lichado"
           VERSION=$(git describe --tags --abbrev=0)  # Ensure you extract the version properly
           BASE_URL="https://github.com/whiteducksoftware/azure-devops-license-checker/releases/download/$VERSION"
           

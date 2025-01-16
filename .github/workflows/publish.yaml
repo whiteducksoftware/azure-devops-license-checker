@@ -42,7 +42,7 @@ jobs:
       - name: Build
         shell: bash
         run: |
-          release_name="azdlc-${{ matrix.target }}"
+          release_name="lichado-${{ matrix.target }}"
 
           # Build everything
           dotnet publish src/AzureDevOpsLicenseChecker/AzureDevOpsLicenseChecker.csproj --framework net8.0 --runtime "${{ matrix.target }}" -c Release -o "$release_name" \
