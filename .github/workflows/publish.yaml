@@ -43,7 +43,7 @@ jobs:
         shell: bash
         run: |
           software_name="lichado"
-          release_name="${{software_name}}-${{ matrix.target }}"
+          release_name="$software_name-${{ matrix.target }}"
 
           # Build everything
           dotnet publish src/AzureDevOpsLicenseChecker/AzureDevOpsLicenseChecker.csproj --framework net8.0 --runtime "${{ matrix.target }}" -c Release -o "$release_name" \
