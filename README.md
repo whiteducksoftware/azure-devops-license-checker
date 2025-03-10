@@ -1,8 +1,7 @@
-# <img src='assets/Lichado Logo.png' height=40> &nbsp; `Lichado`: A License Checker for Azure DevOps 
+# <img src='assets/Lichado_Logo.png' height=40> &nbsp; `Lichado`: A License Checker for Azure DevOps 
 
 
-
-
+![Lichado Banner](assets/Lichado_Banner.png)
 
 
 ![Static Badge](https://img.shields.io/badge/written_in-C%23-blue)
@@ -13,7 +12,6 @@
 
 ## Collaborate with us 👋
 
-* Feel free to give us your **feedback**, make **suggestions** or let us discuss in our 📢 [**discussions tab**](../../discussions/).
 * To report **issues** or search for existing issues go to the 🔎 [**issues tab**](../../issues/).
 
 _And please star this repo ⭐_
@@ -26,7 +24,7 @@ _And please star this repo ⭐_
 lichado list --org ORG_NAME --pat PERSONAL_ACCESS_TOKEN
 ```
 
-<img width="815" alt="Lichado List" src="https://github.com/user-attachments/assets/acf1b630-1d67-41ac-a325-d6b7e0094d97" />
+<img width="815" alt="Lichado List" src="assets/Lichado_List.png" />
 
 
 
@@ -36,7 +34,7 @@ lichado list --org ORG_NAME --pat PERSONAL_ACCESS_TOKEN
 lichado update --org ORG_NAME --pat PERSONAL_ACCESS_TOKEN --license LIC_FROM --target LIC_TO
 ```
 
-<img width="824" alt="Lichado Update" src="https://github.com/user-attachments/assets/90012b81-91f5-4742-a75d-947d7349ba05" />
+<img width="824" alt="Lichado Update" src="assets/Lichado_Update.png" />
 
 
 ### Update Azure DevOps Account License Types, but exclude users from updates which are defined in exclude.json
