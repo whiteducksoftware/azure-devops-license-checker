@@ -30,7 +30,7 @@ lichado list --org ORG_NAME --pat PERSONAL_ACCESS_TOKEN
 
 
 
-### Update Azure DevOps Account License Types from express to stakeholder
+### Update Azure DevOps Account License Types from stakeholder to express
 
 ```
 lichado update --org ORG_NAME --pat PERSONAL_ACCESS_TOKEN --license LIC_FROM --target LIC_TO
