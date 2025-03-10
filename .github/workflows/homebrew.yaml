@@ -43,7 +43,7 @@ jobs:
 
           cat <<EOF > $FORMULA_PATH
           class $UPPERCASE_NAME < Formula
-            desc "Checker whether an Ado License should be updated"
+            desc "Tool to check whether an Azure DevOps License should be updated"
             homepage "https://github.com/whiteducksoftware/azure-devops-license-checker"
             version "$VERSION"
             license "MIT"
