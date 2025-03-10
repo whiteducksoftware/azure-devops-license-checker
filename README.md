@@ -1,8 +1,8 @@
-#  ![411356948-a393ccbc-41cb-423b-8b25-cc4464ff366c](https://github.com/user-attachments/assets/4afec596-909c-41c6-8f9b-b4118b2fe1c8)
+# <img src='assets/Lichado Logo.png' height=40> &nbsp; `Lichado`: A License Checker for Azure DevOps 
 
-`Lichado` : A License Checker for Azure DevOps
 
-![411356947-a2fc42ca-f263-42d6-90a6-5f6594e9b862](https://github.com/user-attachments/assets/8a90e15b-1061-4588-b8bc-ec9a75255998)
+
+
 
 
 ![Static Badge](https://img.shields.io/badge/written_in-C%23-blue)
