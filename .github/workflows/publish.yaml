@@ -3,24 +3,30 @@ name: Publish
 on:
   release:
     types: [published]
+    
+permissions:
+  contents: write 
 
 jobs:
   release:
     name: Release
     strategy:
       matrix:
-        kind: ['linux', 'windows', 'macos-x64', 'macos-arm64']
+        kind: ['linux', 'windows', 'macOS']
         include:
           - kind: linux
             os: ubuntu-latest
             target: linux-x64
+          - kind: linux ARM
+            os: ubuntu-latest
+            target: linux-arm64 
           - kind: windows
             os: windows-latest
             target: win-x64
-          - kind: macos-x64
+          - kind: macOS
             os: macos-latest
             target: osx-x64
-          - kind: macos-arm64
+          - kind: macOS ARM
             os: macos-latest
             target: osx-arm64
     runs-on: ${{ matrix.os }}
@@ -31,23 +37,24 @@ jobs:
       - name: Setup dotnet
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '8.0.x'
+          dotnet-version: 8.0.x  # Updated to .NET 8.0
 
       - name: Build
         shell: bash
         run: |
-          tag=$(git describe --tags --abbrev=0)
-          release_name="v$tag-${{ matrix.target }}"
+          software_name="lichado"
+          release_name="${{software_name}}-${{ matrix.target }}"
 
           # Build everything
-          dotnet publish src/AzureDevOpsLicenseChecker/AzureDevOpsLicenseChecker.csproj --runtime "${{ matrix.target }}" -c Release -o "$release_name"
+          dotnet publish src/AzureDevOpsLicenseChecker/AzureDevOpsLicenseChecker.csproj --framework net8.0 --runtime "${{ matrix.target }}" -c Release -o "$release_name" \
+            -p:PublishSingleFile=true -p:PublishTrimmed=true -p:SelfContained=true
 
           # Pack files
           if [ "${{ matrix.target }}" == "win-x64" ]; then
             # Pack to zip for Windows
-            7z a -tzip "${release_name}.zip" "./${release_name}/*"
+            7z a -tzip "$release_name.zip" "$release_name/$software_name.exe*"
           else
-          tar czvf "${release_name}.tar.gz" "$release_name"
+            tar czvf "$release_name.tar.gz" -C "$release_name" $software_name
           fi
 
           # Delete output directory
@@ -56,6 +63,6 @@ jobs:
       - name: Publish
         uses: softprops/action-gh-release@v1
         with:
-          files: "v*"
+          files: "${{software_name}}*"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
