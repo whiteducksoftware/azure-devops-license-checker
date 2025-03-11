@@ -42,27 +42,26 @@ jobs:
       - name: Build
         shell: bash
         run: |
-          software_name="lichado"
-          release_name="${{software_name}}-${{ matrix.target }}"
+          release_name="${{ vars.SOFTWARE_NAME }}-${{ matrix.target }}"
 
           # Build everything
-          dotnet publish src/AzureDevOpsLicenseChecker/AzureDevOpsLicenseChecker.csproj --framework net8.0 --runtime "${{ matrix.target }}" -c Release -o "$release_name" \
+          dotnet publish src/AzureDevOpsLicenseChecker/AzureDevOpsLicenseChecker.csproj --framework net8.0 --runtime "${{ matrix.target }}" -c Release -o "${release_name}" \
             -p:PublishSingleFile=true -p:PublishTrimmed=true -p:SelfContained=true
 
           # Pack files
           if [ "${{ matrix.target }}" == "win-x64" ]; then
             # Pack to zip for Windows
-            7z a -tzip "${{release_name}}.zip" "${{release_name}}/${{software_name}}.exe*"
+            7z a -tzip "${release_name}.zip" "${release_name}/${{ vars.SOFTWARE_NAME }}.exe*"
           else
-            tar czvf "${{release_name}}.tar.gz" -C "${{release_name}}" ${{software_name}}
+            tar czvf "${release_name}.tar.gz" -C "${release_name}" ${{ vars.SOFTWARE_NAME }}
           fi
 
           # Delete output directory
-          rm -r "${{release_name}}"
+          rm -r "${release_name}"
 
       - name: Publish
         uses: softprops/action-gh-release@v1
         with:
-          files: "${{software_name}}*"
+          files: "${{ vars.SOFTWARE_NAME }}*"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
