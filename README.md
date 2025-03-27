@@ -54,12 +54,12 @@ exclude.json:
 ## Installation
 
 ### Homebrew (macOS, Linux)
- - Install `licado` with `brew install whiteducksoftware/tap/licado`
+ - Install `lichado` with `brew install whiteducksoftware/tap/lichado`
  
 ### Chocolatey (Windows)`
- - Install `licado` with `choco install licado`
+ - Install `lichado` with `choco install licado`
 
 ### Binary (Windows, Linux, macOS)
- - Download the latest `licado` binary from [releases](https://github.com/whiteducksoftware/azure-devops-license-checker/releases) 
+ - Download the latest `lichado` binary from [releases](https://github.com/whiteducksoftware/azure-devops-license-checker/releases) 
  - Extract the binary from .tar or .zip file 
- - Add the `licado` binary to your PATH
+ - Add the `lichado` binary to your PATH
