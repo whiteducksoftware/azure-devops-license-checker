@@ -92,8 +92,8 @@ jobs:
           VERSION=$(git describe --tags --abbrev=0)
           BRANCH_NAME="action/updates-for-pr/$VERSION"
           cd tap_repo
-          git checkout -b "BRANCH_NAME"
-          # git pull origin BRANCH_NAME
+          git checkout -b "$BRANCH_NAME"
+          # git pull origin $BRANCH_NAME
 
       - name: Copy Data to Homebrew Tap Repo
         run: |
