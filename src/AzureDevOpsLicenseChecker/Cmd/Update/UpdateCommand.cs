@@ -49,7 +49,7 @@ public class UpdateCommand
 
             await licenseCheckerService.UpdateUserLicensesAsync();
 
-            Console.WriteLine("License(s) succesfully changed!");
+            Console.WriteLine("License(s) successfully changed!");
         }
 
     }
