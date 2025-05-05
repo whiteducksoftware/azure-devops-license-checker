@@ -39,7 +39,7 @@ public class LicenseCheckerService
             if (fileContent is not null)
                 _excludeUsers = JsonConvert.DeserializeObject<ExcludeUsersModel>(fileContent) ?? new ExcludeUsersModel();
         }
-        catch (Exception ex) when (ex is JsonReaderException || ex is JsonSerializationException) 
+        catch (Exception ex) when (ex is JsonReaderException || ex is JsonSerializationException)
         {
             Console.WriteLine("\n Json is unvalid. Try Format: '{[\"fred@whiteduck.de\", \"user01@whiteduck.de\"]}' \n");
             Environment.Exit(0);
@@ -134,8 +134,6 @@ public class LicenseCheckerService
         if (!(updateList.Count <= 0))
         {
             await _devOpsClient.UpdateUsersAsync(updateList);
-            //var resp = await _devOpsClient.PatchAsync(this._endpoint, updateList);
-            //Console.WriteLine(await resp.Content.ReadAsStringAsync());
         }
     }
 }

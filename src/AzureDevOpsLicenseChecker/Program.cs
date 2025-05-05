@@ -1,6 +1,8 @@
-﻿using System.CommandLine;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using AzureDevOpsLicenseChecker.Cmd.List;
 using AzureDevOpsLicenseChecker.Cmd.Update;
+using Spectre.Console.Cli;
 
 namespace AzureDevOpsLicenseChecker;
 
@@ -8,74 +10,86 @@ class Program
 {
     static async Task<int> Main(string[] args)
     {
-        var organizationOption = new Option<string>(
-            name: "--org",
-            description: "The organization name")
+        var app = new CommandApp();
+
+        app.Configure(config =>
         {
-            IsRequired = true
-        };
 
-        var personalAccessTokenOption = new Option<string>(
-            name: "--pat",
-            description: "The value of the personal access token which will be used to authenticate against Azure DevOps")
-        {
-            IsRequired = true
-        };
+            string fullVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "1.1.69";
+            string version = fullVersion.EndsWith(".0") ? fullVersion.Substring(0, fullVersion.Length - 2) : fullVersion;
+            config.SetApplicationVersion(version);
+            config.AddCommand<ListCommandCli>("list")
+                .WithDescription("List Azure DevOps licenses");
 
-        var licenseOption = new Option<string>(
-            name: "--license",
-            description: "The license to update")
-        {
-            IsRequired = true
-        };
+            config.AddCommand<UpdateCommandCli>("update")
+                .WithDescription("Update Azure DevOps licenses");
+        });
 
-        var targetLicenseOption = new Option<string>(
-            name: "--target",
-            description: "The target license")
-        {
-            IsRequired = true
-        };
+        return await app.RunAsync(args);
+    }
+}
 
-        var sinceLastLoginOption = new Option<int>(
-            name: "--since",
-            description: "the minimum number of days since the last login [Default: 0]");
+// Common settings used by both commands
+public class AzureDevOpsCommandSettings : CommandSettings
+{
+    [CommandOption("--org")]
+    [Description("The organization name")]
+    [Required]
+    public string Organization { get; set; } = string.Empty;
 
-        var fileOption = new Option<string>(
-            name: "--file",
-            description: "exclude users from update");
+    [CommandOption("--pat")]
+    [Description("The value of the personal access token which will be used to authenticate against Azure DevOps")]
+    [Required]
+    public string PersonalAccessToken { get; set; } = string.Empty;
+}
 
-        var rootCommand = new RootCommand("Azure DevOps License Checker");
+// List command implementation
+public class ListCommandSettings : AzureDevOpsCommandSettings
+{
+}
 
-        var listCommand = new Command("list", "list azure devops licenses")
-        {
-            organizationOption,
-            personalAccessTokenOption
-        };
+public class ListCommandCli : AsyncCommand<ListCommandSettings>
+{
+    public override async Task<int> ExecuteAsync(CommandContext context, ListCommandSettings settings)
+    {
+        await ListCommand.ListAsync(settings.Organization, settings.PersonalAccessToken);
+        return 0;
+    }
+}
 
-        var updateCommand = new Command("update", "update azure devops licenses")
-        {
-            organizationOption,
-            personalAccessTokenOption,
-            licenseOption,
-            targetLicenseOption,
-            sinceLastLoginOption,
-            fileOption
-        };
+// Update command implementation
+public class UpdateCommandSettings : AzureDevOpsCommandSettings
+{
+    [CommandOption("--license")]
+    [Description("The license to update")]
+    [Required]
+    public string License { get; set; } = string.Empty;
 
-        listCommand.SetHandler(ListCommand.ListAsync,
-                               organizationOption,
-                               personalAccessTokenOption);
-        updateCommand.SetHandler(UpdateCommand.UpdateAsync,
-                                  organizationOption,
-                                  personalAccessTokenOption,
-                                  licenseOption,
-                                  targetLicenseOption,
-                                  sinceLastLoginOption,
-                                  fileOption);
+    [CommandOption("--target")]
+    [Description("The target license")]
+    [Required]
+    public string TargetLicense { get; set; } = string.Empty;
 
-        rootCommand.AddCommand(listCommand);
-        rootCommand.AddCommand(updateCommand);
+    [CommandOption("--since")]
+    [Description("The minimum number of days since the last login [[Default: 0]]")]
+    public int SinceLastLogin { get; set; } = 0;
 
-        return await rootCommand.InvokeAsync(args);
+    [CommandOption("--file")]
+    [Description("Exclude users from update")]
+    public string? ExcludeFile { get; set; }
+}
+
+public class UpdateCommandCli : AsyncCommand<UpdateCommandSettings>
+{
+    public override async Task<int> ExecuteAsync(CommandContext context, UpdateCommandSettings settings)
+    {
+        await UpdateCommand.UpdateAsync(
+            settings.Organization,
+            settings.PersonalAccessToken,
+            settings.License,
+            settings.TargetLicense,
+            settings.SinceLastLogin,
+            settings.ExcludeFile);
+        return 0;
     }
 }

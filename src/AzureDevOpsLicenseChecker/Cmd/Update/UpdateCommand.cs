@@ -1,6 +1,7 @@
 using System.Runtime.CompilerServices;
 using Spectre.Console;
 using AzureDevOpsLicenseChecker.Services;
+using System.ComponentModel;
 
 namespace AzureDevOpsLicenseChecker.Cmd.Update;
 
@@ -47,18 +48,14 @@ public class UpdateCommand
             }
 
             await licenseCheckerService.UpdateUserLicensesAsync();
+
+            Console.WriteLine("License(s) succesfully changed!");
         }
 
     }
-    
+
     private static void CheckIfValidLicense(string targetLicense)
     {
-        //for debugging so you don't have to switch license 
-        //if (targetLicense.Equals("none") || targetLicense.Equals(string.Empty))
-        //{
-        //    return;
-        //}
-
         if (targetLicense.Equals("stakeholder") || targetLicense.Equals("express") || targetLicense.Equals("advanced"))
         {
             return;
