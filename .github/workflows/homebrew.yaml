@@ -24,7 +24,7 @@ jobs:
           SOFTWARE_NAME="${{ vars.SOFTWARE_NAME }}"
           UPPERCASE_NAME="${{ vars.UPPERCASE_SOFTWARE_NAME }}"
           VERSION=$(git describe --tags --abbrev=0)  # Ensure you extract the version properly
-          BASE_URL="https://github.com/whiteducksoftware/azure-devops-license-checker/releases/download/$VERSION"
+          BASE_URL="https://github.com/whiteducksoftware/azure-devops-license-checker/releases/download/v$VERSION"
           
           # Define paths for each platform's asset
           LINUX_X64_URL="$BASE_URL/$SOFTWARE_NAME-linux-x64.tar.gz"
