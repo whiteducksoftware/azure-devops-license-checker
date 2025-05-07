@@ -29,20 +29,20 @@ jobs:
           echo BaseURL: "$BASE_URL"
           # Define paths for each platform's asset
           LINUX_X64_URL="$BASE_URL/$SOFTWARE_NAME-linux-x64.tar.gz"
-          echo LinuxX64URL: "$LINUX_X64_URL"
           LINUX_X64_SHA256=$(curl -sSL "$LINUX_X64_URL" | shasum -a 256 | awk '{print $1}')
+          echo LinuxX64cs: "$LINUX_X64_SHA256"
           
           LINUX_ARM_URL="$BASE_URL/$SOFTWARE_NAME-linux-arm64.tar.gz"
-          echo LinuxARMURL: "$LINUX_ARM_URL"
           LINUX_ARM_SHA256=$(curl -sSL "$LINUX_ARM_URL" | shasum -a 256 | awk '{print $1}')
+          echo LinuxARMcs: "$LINUX_ARM_SHA256"
           
           MAC_X64_URL="$BASE_URL/$SOFTWARE_NAME-osx-x64.tar.gz"
-          echo MacX64URL: "$MAC_X64_URL"
           MAC_X64_SHA256=$(curl -sSL "$MAC_X64_URL" | shasum -a 256 | awk '{print $1}')
+          echo MacX64cs: "$MAC_X64_SHA256"
           
           MAC_ARM_URL="$BASE_URL/$SOFTWARE_NAME-osx-arm64.tar.gz"
-          echo MacARM64: "$MAC_ARM_URL"
           MAC_ARM_SHA256=$(curl -sSL "$MAC_ARM_URL" | shasum -a 256 | awk '{print $1}')
+          echo MACARMcs: "$MAC_ARM_SHA256"
 
           FORMULA_PATH=./$SOFTWARE_NAME.rb
 
