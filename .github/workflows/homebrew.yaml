@@ -24,19 +24,24 @@ jobs:
           SOFTWARE_NAME="${{ vars.SOFTWARE_NAME }}"
           UPPERCASE_NAME="${{ vars.UPPERCASE_SOFTWARE_NAME }}"
           VERSION=$(git describe --tags --abbrev=0)  # Ensure you extract the version properly
-          BASE_URL="https://github.com/whiteducksoftware/azure-devops-license-checker/releases/download/v$VERSION"
+          BASE_URL="https://github.com/whiteducksoftware/azure-devops-license-checker/releases/download/$VERSION"
           
+          echo BaseURL: "$BASE_URL"
           # Define paths for each platform's asset
           LINUX_X64_URL="$BASE_URL/$SOFTWARE_NAME-linux-x64.tar.gz"
+          echo LinuxX64URL: "$LINUX_X64_URL"
           LINUX_X64_SHA256=$(curl -sSL "$LINUX_X64_URL" | shasum -a 256 | awk '{print $1}')
           
           LINUX_ARM_URL="$BASE_URL/$SOFTWARE_NAME-linux-arm64.tar.gz"
+          echo LinuxARMURL: "$LINUX_ARM_URL"
           LINUX_ARM_SHA256=$(curl -sSL "$LINUX_ARM_URL" | shasum -a 256 | awk '{print $1}')
           
           MAC_X64_URL="$BASE_URL/$SOFTWARE_NAME-osx-x64.tar.gz"
+          echo MacX64URL: "$MAC_X64_URL"
           MAC_X64_SHA256=$(curl -sSL "$MAC_X64_URL" | shasum -a 256 | awk '{print $1}')
           
           MAC_ARM_URL="$BASE_URL/$SOFTWARE_NAME-osx-arm64.tar.gz"
+          echo MacARM64: "$MAC_ARM_URL"
           MAC_ARM_SHA256=$(curl -sSL "$MAC_ARM_URL" | shasum -a 256 | awk '{print $1}')
 
           FORMULA_PATH=./$SOFTWARE_NAME.rb
