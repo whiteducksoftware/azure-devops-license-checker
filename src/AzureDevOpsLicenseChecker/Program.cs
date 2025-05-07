@@ -15,14 +15,16 @@ class Program
         app.Configure(config =>
         {
 
-            string fullVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "1.1.69";
+            string fullVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "1.0.0";
             string version = fullVersion.EndsWith(".0") ? fullVersion.Substring(0, fullVersion.Length - 2) : fullVersion;
             config.SetApplicationVersion(version);
             config.AddCommand<ListCommandCli>("list")
-                .WithDescription("List Azure DevOps licenses");
+                .WithDescription("List Azure DevOps licenses")
+                .WithExample(new[] { "list", "--org", "<ORG_NAME>", "--pat", "<PAT>" });
 
             config.AddCommand<UpdateCommandCli>("update")
-                .WithDescription("Update Azure DevOps licenses");
+                .WithDescription("Update Azure DevOps licenses")
+                .WithExample(new[] { "update", "--org", "<ORG_NAME>", "--pat", "<PAT>", "--license", "<LICENSE_TYPE>", "--target", "<LICENSE_TYPE>" });
         });
 
         return await app.RunAsync(args);
