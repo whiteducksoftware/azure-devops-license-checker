@@ -56,8 +56,6 @@ exclude.json:
 ### Homebrew (macOS, Linux)
  - Install `lichado` with `brew install whiteducksoftware/tap/lichado`
  
-### Chocolatey (Windows)`
- - Install `lichado` with `choco install lichado`
 
 ### Binary (Windows, Linux, macOS)
  - Download the latest `lichado` binary from [releases](https://github.com/whiteducksoftware/azure-devops-license-checker/releases) 
