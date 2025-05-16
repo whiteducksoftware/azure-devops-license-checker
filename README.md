@@ -58,24 +58,25 @@ exclude.json:
 
 ### Binary (Windows)
 1. **Download**  
-   - Grab the latest `lichado.exe` from the [releases page](https://github.com/azure-devops-license-checker/releases).
+   - Grab the latest `lichado.exe` from the [releases page](https://github.com/whiteducksoftware/azure-devops-license-checker/releases).
    - Extract the binary from the zip folder
 
-2. **Create a “bin” folder (if you don’t already have one)**  
+2. **Create a “Lichado” folder**  
+   The "Program" folder is a suitable option (but put it anywhere you like)
    ```powershell
-   mkdir C:\bin
+   mkdir Lichado
 
 3. **Copy the binary**
    ```powershell
-   copy .\path\to\lichado.exe C:\bin\
+   copy .\path\to\lichado.exe C:\path\to\Lichado
 
-4.	**Add C:\bin to your PATH**
+4.	**Add C:\path\to\Lichado to your PATH**
 	1.	Press **Win+R**, type sysdm.cpl and hit **Enter**.
 	2.	Go to **Advanced** → **Environment Variables…**
 	3.	Under **User variables** (or **System variables**), select **Path**, then click **Edit…**
 	4.	Click **New** and enter:
     ```
-    C:\bin
+    C:\path\to\Lichado
   5. Click **OK** on all dialogs to save.
 
 5. **Restart your terminal**
