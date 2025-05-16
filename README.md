@@ -55,9 +55,33 @@ exclude.json:
 
 ### Homebrew (macOS, Linux)
  - Install `lichado` with `brew install whiteducksoftware/tap/lichado`
- 
 
-### Binary (Windows, Linux, macOS)
- - Download the latest `lichado` binary from [releases](https://github.com/whiteducksoftware/azure-devops-license-checker/releases) 
- - Extract the binary from .tar or .zip file 
- - Add the `lichado` binary to your PATH
+### Binary (Windows)
+1. **Download**  
+   - Grab the latest `lichado.exe` from the [releases page](https://github.com/azure-devops-license-checker/releases).
+   - Extract the binary from the zip folder
+
+2. **Create a “bin” folder (if you don’t already have one)**  
+   ```powershell
+   mkdir C:\bin
+
+3. **Copy the binary**
+   ```powershell
+   copy .\path\to\lichado.exe C:\bin\
+
+4.	**Add C:\bin to your PATH**
+	1.	Press **Win+R**, type sysdm.cpl and hit **Enter**.
+	2.	Go to **Advanced** → **Environment Variables…**
+	3.	Under **User variables** (or **System variables**), select **Path**, then click **Edit…**
+	4.	Click **New** and enter:
+    ```
+    C:\bin
+  5. Click **OK** on all dialogs to save.
+
+5. **Restart your terminal**
+   Close and reopen any Command Prompt or PowerShell windows.
+
+6. **Verify installation**
+   ```powershell
+   where lichado
+   lichado --help
